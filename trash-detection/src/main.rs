@@ -1,5 +1,6 @@
+mod gradient;
+
 fn main()
 {
-    println!("Hello, world!");
-    println!("Hello Yohan!")
+    framework::run::<gradient::GradientResolver>();
 }
