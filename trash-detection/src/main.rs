@@ -1,6 +1,6 @@
-mod gradient;
+mod convolution;
 
 fn main()
 {
-    framework::run::<gradient::GradientResolver>();
+    framework::run::<convolution::Convolution>();
 }
