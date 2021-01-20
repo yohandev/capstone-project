@@ -1,6 +1,7 @@
 mod convolution;
+mod hog;
 
 fn main()
 {
-    framework::run::<convolution::Convolution>();
+    framework::run::<hog::Hog>();
 }
