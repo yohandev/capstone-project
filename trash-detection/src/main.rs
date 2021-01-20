@@ -4,5 +4,5 @@ mod hog;
 
 fn main()
 {
-    framework::run::<algo3::Algo3>();
+    framework::run::<hog::Hog>();
 }

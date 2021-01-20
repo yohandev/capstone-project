@@ -31,22 +31,31 @@ impl Sketch for Hog
     }
 }
 
+fn colour_magnitude(px: Rgba<f32>) -> f32
+{
+    let mag_sqr = px.r * px.r
+                + px.g * px.g
+                + px.b * px.b;
+
+    mag_sqr.sqrt()
+}
+
 /// normalize an image's pixels
 fn normalize(img: &mut Image)
 {
     img.par_iter_pixels_mut().for_each(|(_, px)|
     {
-        let mut px_f32 = px.as_::<f32>();
-        let mag_sqr = px_f32.r * px_f32.r
-                    + px_f32.g * px_f32.g
-                    + px_f32.b * px_f32.b;
-        let mul = 255.0 / mag_sqr.sqrt();
+        *px =
+        {
+            let mut px = px.as_();
+            let mul = 255.0 / colour_magnitude(px);
 
-        px_f32.r *= mul;
-        px_f32.g *= mul;
-        px_f32.b *= mul;
+            px.r *= mul;
+            px.g *= mul;
+            px.b *= mul;
 
-        *px = px_f32.as_();
+            px.as_()
+        };        
     })
 }
 
@@ -64,11 +73,27 @@ fn dominant_colour(img: &Image) -> Rgba<u8>
 
 fn remove_colour(img: &mut Image, col: Rgba<u8>)
 {
+    let col = col.as_();
+
     img.par_iter_pixels_mut().for_each(|(_, px)|
     {
-        *px /= col; 
-        // undo alpha
-        px.a *= col.a;
+        *px =
+        {
+            let px = px.as_();
+            let dt = px - col;
+
+            /// non-linearity function that squishes values
+            /// from 0.0 to 1.0
+            fn sigmoid(val: f32) -> f32
+            {
+                1.0 / (1.0 + (-val).exp())
+            }
+
+            let mag = colour_magnitude(dt) / (255.0);
+            let val = sigmoid(mag) * 255.0;
+
+            Rgba::grey(val as u8)
+        }
     })
 }
 
