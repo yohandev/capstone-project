@@ -8,7 +8,7 @@ impl Sketch for Hog
     {
         // load image
         let mut img = app
-            .load_image("res/minecraft_water.png")
+            .load_image("res/02.jpg")
             .unwrap();
         
         // process image
@@ -18,7 +18,7 @@ impl Sketch for Hog
         println!("{}", dom_col);
 
         remove_colour(&mut img, dom_col);
-        //remove_blue(&mut img);
+        extremize(&mut img, 5);
 
         app.create_canvas("hog", img.size());
 
@@ -94,6 +94,22 @@ fn remove_colour(img: &mut Image, col: Rgba<u8>)
 
             Rgba::grey(val as u8)
         }
+    })
+}
+
+fn extremize(img: &mut Image, n: i32)
+{
+    img.par_iter_pixels_mut().for_each(|(_, px)|
+    {
+        *px =
+        {
+            let px = px.as_();
+
+            let mag = colour_magnitude(px);
+            let deg = 255.0 * (mag / 255.0).powi(n);
+
+            Rgba::grey(deg as u8)
+        };     
     })
 }
 
