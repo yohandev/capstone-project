@@ -6,9 +6,9 @@ use framework::prelude::*;
 /// feature map to detect edges
 const FEATURE_MAP: [f32; 9] =
 [
-    -1.0, -4.0, -1.0,
-    0.0, 0.0, 0.0,
-    1.0, 4.0, 1.0,
+    1.0, 2.0, 1.0,
+    0.0, 1.0, 0.0,
+    1.0, 2.0, 1.0,
 ];
 
 pub struct Convolution
@@ -22,7 +22,7 @@ impl Sketch for Convolution
     {
         // the source image
         let src = app
-            .load_image("res/trees.jpg")
+            .load_image("res/Archive/03_out.png")
             .unwrap();
 
         // convolution process:
