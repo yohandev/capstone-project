@@ -6,9 +6,9 @@ use framework::prelude::*;
 /// feature map to detect edges
 const FEATURE_MAP: [f32; 9] =
 [
-    1.0, 2.0, 1.0,
     0.0, 1.0, 0.0,
-    1.0, 2.0, 1.0,
+    1.0, -4.0, 1.0,
+    0.0, 1.0, 0.0,
 ];
 
 pub struct Convolution
@@ -33,9 +33,9 @@ impl Sketch for Convolution
             for y in 0..img.height() as i32
             {
                 /// get the grey level of a color
-                fn grey_level(col: Rgba<u8>) -> f32
+                fn grey_level(color: Rgba<u8>) -> f32
                 {
-                    col.as_::<f32>().average_rgb()
+                    color.as_::<f32>().average_rgb()
                 }
 
                 /// non-linearity function that squishes values
