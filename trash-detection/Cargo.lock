@@ -773,7 +773,7 @@ dependencies = [
 [[package]]
 name = "framework"
 version = "0.2.0"
-source = "git+https://github.com/yohandev/framework-rs?branch=master#5ca6b33f45ab17aba75e499aa7002ba2b713343c"
+source = "git+https://github.com/yohandev/framework-rs?branch=master#00f00bbd00aa889883cfda84f48caa5ade68470a"
 dependencies = [
  "audrey",
  "image",
