@@ -1,6 +1,8 @@
+#[allow(dead_code)]
+
 use framework::prelude::*;
 
-pub struct Hog(Image);
+pub struct Hog(Image, f32, Rgba<u8>);
 
 impl Sketch for Hog
 {
@@ -8,26 +10,45 @@ impl Sketch for Hog
     {
         // load image
         let mut img = app
-            .load_image("res/minecraft_water.png")
+            .load_image("res/08.jpg")
             .unwrap();
         
         // process image
-        normalize(&mut img);
+        //normalize(&mut img);
         // colour
         let dom_col = dominant_colour(&img);
-        println!("{}", dom_col);
+        //println!("{}", dom_col);
 
-        remove_colour(&mut img, dom_col);
-        //remove_blue(&mut img);
+        //remove_colour(&mut img, dom_col);
+        //extremize(&mut img, 5);
+        //threshold(&mut img, 0.75);
 
         app.create_canvas("hog", img.size());
 
-        Self(img)
+        Self(img, 0.5, dom_col)
     }
 
     fn draw(&mut self, c: &mut Canvas)
     {
         c.image(&self.0, v![0, 0]);
+
+        threshold_col(c, self.2, self.1);
+    }
+
+    fn update(&mut self, app: &mut App)
+    {
+        if app.keys().down(btn!("right"))
+        {
+            self.1 += 0.1 * app.time().dt();
+
+            println!("THRESHOLD: {}", self.1);
+        }
+        else if app.keys().down(btn!("left"))
+        {
+            self.1 -= 0.1 * app.time().dt();
+
+            println!("THRESHOLD: {}", self.1);
+        }
     }
 }
 
@@ -94,6 +115,57 @@ fn remove_colour(img: &mut Image, col: Rgba<u8>)
 
             Rgba::grey(val as u8)
         }
+    })
+}
+
+fn extremize(img: &mut Image, n: i32)
+{
+    img.par_iter_pixels_mut().for_each(|(_, px)|
+    {
+        *px =
+        {
+            let px = px.as_();
+
+            let mag = colour_magnitude(px);
+            let deg = 255.0 * (mag / 255.0).powi(n);
+
+            Rgba::grey(deg as u8)
+        };     
+    })
+}
+
+fn invert(img: &mut Image)
+{
+    img.par_iter_pixels_mut().for_each(|(_, px)|
+    {
+        px.r = 255 - px.r;
+        px.g = 255 - px.g;
+        px.b = 255 - px.b;
+    })
+}
+
+fn threshold(img: &mut Canvas, val: f32)
+{
+    img.par_iter_pixels_mut().for_each(|(_, px)|
+    {
+        let grey = px.b as f32 / 255.0;
+
+        *px = if grey > val { c!("black") } else { c!("white") };
+    })
+}
+
+fn threshold_col(img: &mut Canvas, discriminant: Rgba<u8>, val: f32)
+{
+    let col = discriminant.as_();
+
+    img.par_iter_pixels_mut().for_each(|(_, px)|
+    {
+        let pxf32 = px.as_();
+        let dt = pxf32 - col;
+
+        let grey = colour_magnitude(dt) / 255.0;
+
+        *px = if grey > val { c!("black") } else { c!("white") };
     })
 }
 
