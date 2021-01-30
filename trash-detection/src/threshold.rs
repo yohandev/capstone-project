@@ -97,6 +97,6 @@ fn threshold_algo(img: &mut Canvas, base: Rgba<u8>, val: f32)
 
         let grey = colour_magnitude(dt) / 255.0;
 
-        *px = if grey > val { c!("black") } else { c!("white") };
+        *px = if grey > val { *px } else { c!("black") };
     })
 }
