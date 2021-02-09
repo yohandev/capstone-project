@@ -1,3 +1,5 @@
+use threshold::ThresholdAlgorithm;
+
 mod convolution;
 mod threshold;
 mod algo3;

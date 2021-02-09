@@ -17,7 +17,7 @@ impl Sketch for ThresholdAlgorithm
     {
         // load source image
         let img = app
-            .load_image("res/08.jpg")
+            .load_image("res/DJI_0019.jpg")
             .unwrap();
         // get the average colour in source image
         let avg = average(&img);
