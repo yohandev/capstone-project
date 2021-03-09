@@ -4,5 +4,7 @@ version = "0.1.0"
 authors = ["Yohan Guyomard", "Charles O'Hanlon"]
 edition = "2018"
 
-[dependencies]
-framework = { git = "https://github.com/yohandev/framework-rs", branch = "master" }
+[dependencies.framework]
+git = "https://github.com/yohandev/framework-rs"
+branch = "master"
+default-features = false

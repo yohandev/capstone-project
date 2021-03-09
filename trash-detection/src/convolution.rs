@@ -22,7 +22,7 @@ impl Sketch for Convolution
     {
         // the source image
         let src = app
-            .load_image("res/DJI_0019.jpg")
+            .load_image("res/DJI_0018.jpg")
             .unwrap();
 
         // convolution process:
