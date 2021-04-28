@@ -2,6 +2,7 @@ use framework::math::Wrap;
 
 //mod algo;
 mod algo2;
+mod util;
 
 fn main()
 {
