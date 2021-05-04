@@ -121,7 +121,7 @@ impl Sketch for TrashDetection
 
 mod util
 {
-    use std::collections::HashMap;
+    use std::collections::{HashMap, hash_map::RandomState};
 
     use framework::{ c, v };
     use framework::math::*;
@@ -283,6 +283,17 @@ mod util
     pub fn cavg_chunks(img: bitmap_t!(ref), siz: Extent2<usize>) -> HashMap<Vec2<i32>, Rgb<f32>>
     {
         use std::ops::Div;
+        static mut STATE: Option<RandomState> = None;
+
+        let state = unsafe
+        {
+            if STATE.is_none()
+            {
+                STATE = Some(RandomState::new());
+            }
+            STATE.clone().unwrap()
+        };
+        let mut map = HashMap::with_hasher(state);
 
         img
             .iter_pixel_chunks(siz)
@@ -312,7 +323,9 @@ mod util
                 })
             )
             .filter(|(_, rgb)| *rgb != Rgb::black())
-            .collect::<_>()
+            .for_each(|(k, v)| { map.insert(k, v); });
+            //.collect::<_>()
+            map
     }
 
     pub fn locate_objects(img: bitmap_t!(ref), siz: Extent2<usize>) -> Vec<(Vec<Vec2<i32>>, Rgb<f32>)>
@@ -376,10 +389,10 @@ mod util
             c!("chocolate"),
         ];
         out.no_stroke();
-        for ((pos, _avg), col) in map.iter().zip(COLS)
+        for ((pos, avg)/*, col */) in map//.iter().zip(COLS)
         {
-           // out.fill(Rgba::from((avg * 255.0).as_::<u8>()));
-            out.fill(*col);
+            out.fill(Rgba::from((avg * 255.0).as_::<u8>()));
+            //out.fill(_avg );
             out.rect(v![pos.x * siz.w, pos.y * siz.h], siz.into());
         }
         out
